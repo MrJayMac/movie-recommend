@@ -102,6 +102,27 @@ app.post('/watched', async (req, res) => {
   }
 });
 
+app.get('/added', async (req, res) => {
+  const { user_id } = req.query;
+
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT movie, poster_path FROM watched WHERE user_id = $1',
+      [user_id]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching added movies:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
 app.delete('/delete', async (req, res) => {
   const { movie, user_id } = req.body;
 

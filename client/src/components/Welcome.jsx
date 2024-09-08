@@ -19,7 +19,6 @@ const Welcome = () => {
     e.preventDefault();
     setError(null);
 
-    // Client-side validation
     if (isLogIn) {
       if (!username || !password) {
         return setError('Username and password are required.');
@@ -56,10 +55,11 @@ const Welcome = () => {
       if (isLogIn) {
         console.log('Login successful:', result.token);
         localStorage.setItem('token', result.token);
-        navigate('/home');
+        navigate('/home'); 
       } else {
         console.log('Registration successful:', result);
-        navigate('/');
+        setIsLogin(true);  
+        navigate('/'); 
       }
     } catch (error) {
       setError(error.message);

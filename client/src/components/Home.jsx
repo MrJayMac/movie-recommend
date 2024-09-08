@@ -79,6 +79,26 @@ const Home = () => {
     }
   };
 
+  const fetchSavedMovies = async () => {
+    try {
+      const response = await axios.get(`http://localhost:5000/added`, {
+        params: { user_id: userId },
+      });
+
+      if (response.data) {
+        setMovieList(response.data.map(movie => movie.movie));
+      }
+    } catch (error) {
+      console.error('Error fetching saved movies:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      fetchSavedMovies();
+    }
+  }, [userId]);
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchSuggestions(searchQuery);

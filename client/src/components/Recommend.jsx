@@ -48,7 +48,6 @@ const Recommend = () => {
   }, [apiKey]);
 
   const shuffleArray = (array) => {
-    // Create a copy of the array to avoid modifying the original array
     const arrayCopy = [...array];
     for (let i = arrayCopy.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -78,14 +77,11 @@ const Recommend = () => {
 
       let filteredRecommendations = response.data;
 
-      // Filter recommendations based on selected genre
       if (selectedGenre !== 'All') {
         filteredRecommendations = filteredRecommendations.filter(rec =>
           rec.genre_names.includes(selectedGenre)
         );
       }
-
-      // Randomize the recommendations
       const randomizedRecommendations = shuffleArray(filteredRecommendations);
 
       setRecommendations(randomizedRecommendations);
