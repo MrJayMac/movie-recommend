@@ -29,7 +29,10 @@ const Home = () => {
       });
 
       if (response.data.results) {
-        setSuggestions(response.data.results.slice(0, 5).map((movie) => movie.title));
+        setSuggestions(response.data.results.slice(0, 5).map((movie) => ({
+          title: movie.title,
+          poster_path: movie.poster_path
+        })));
       } else {
         setSuggestions([]);
       }
@@ -48,11 +51,21 @@ const Home = () => {
 
   const addMovieToListAndDB = async (movieTitle) => {
     try {
-      setMovieList([...movieList, movieTitle]);
+      const response = await axios.get(`http://localhost:5000/search`, {
+        params: { query: movieTitle }
+      });
+      const movie = response.data.results[0]; // Assuming the first result is the correct movie
+      const movieWithPoster = {
+        title: movie.title,
+        poster_path: movie.poster_path
+      };
+
+      setMovieList([...movieList, movieWithPoster]);
 
       await axios.post(`http://localhost:5000/watched`, {
-        movie: movieTitle,
+        movie: movie.title,
         user_id: userId,
+        poster_path: movie.poster_path,
       });
 
       setSuggestions([]);
@@ -63,8 +76,8 @@ const Home = () => {
   };
 
   const handleSuggestionClick = async (suggestion) => {
-    setSearchQuery(suggestion);
-    await addMovieToListAndDB(suggestion);
+    setSearchQuery(suggestion.title);
+    await addMovieToListAndDB(suggestion.title);
   };
 
   const handleDelete = async (movieTitle) => {
@@ -73,7 +86,7 @@ const Home = () => {
         data: { movie: movieTitle, user_id: userId },
       });
 
-      setMovieList(movieList.filter((movie) => movie !== movieTitle));
+      setMovieList(movieList.filter((movie) => movie.title !== movieTitle));
     } catch (error) {
       console.error('Error deleting movie:', error);
     }
@@ -86,7 +99,10 @@ const Home = () => {
       });
 
       if (response.data) {
-        setMovieList(response.data.map(movie => movie.movie));
+        setMovieList(response.data.map(movie => ({
+          title: movie.movie,
+          poster_path: movie.poster_path
+        })));
       }
     } catch (error) {
       console.error('Error fetching saved movies:', error);
@@ -123,6 +139,7 @@ const Home = () => {
           placeholder="Search for a movie..."
           onFocus={() => fetchSuggestions(searchQuery)}
         />
+        <div className='watched-movies'>Watched Movies</div>
         {suggestions.length > 0 && (
           <div className="suggestions-dropdown">
             {suggestions.map((suggestion, index) => (
@@ -131,7 +148,7 @@ const Home = () => {
                 className="suggestion-item"
                 onClick={() => handleSuggestionClick(suggestion)}
               >
-                {suggestion}
+                {suggestion.title}
               </div>
             ))}
           </div>
@@ -140,9 +157,14 @@ const Home = () => {
       
       <div className="movie-list">
         {movieList.map((movie) => (
-          <div key={movie} className="movie-item">
-            <span className="movie-title">{movie}</span>
-            <button className="delete-button" onClick={() => handleDelete(movie)}>Delete</button>
+          <div key={movie.title} className="movie-item">
+            <img 
+              src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+              alt={movie.title} 
+              className="movie-poster" 
+            />
+            <span className="movie-title">{movie.title}</span>
+            <button className="delete-button" onClick={() => handleDelete(movie.title)}>Delete</button>
           </div>
         ))}
       </div>

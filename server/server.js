@@ -91,10 +91,21 @@ app.post('/watched', async (req, res) => {
   }
 
   try {
+    const response = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        query: movie,
+      },
+    });
+
+    const movieDetails = response.data.results[0]; 
+    const posterPath = movieDetails.poster_path;  
+
     await pool.query(
-      'INSERT INTO watched (movie, user_id) VALUES ($1, $2)',
-      [movie, user_id]
+      'INSERT INTO watched (movie, user_id, poster_path) VALUES ($1, $2, $3)',
+      [movie, user_id, posterPath]
     );
+
     res.status(200).json({ message: 'Movie added to watched list' });
   } catch (error) {
     console.error('Error adding movie to watched list:', error);
@@ -102,25 +113,6 @@ app.post('/watched', async (req, res) => {
   }
 });
 
-app.get('/added', async (req, res) => {
-  const { user_id } = req.query;
-
-  if (!user_id) {
-    return res.status(400).json({ error: 'User ID is required' });
-  }
-
-  try {
-    const result = await pool.query(
-      'SELECT movie, poster_path FROM watched WHERE user_id = $1',
-      [user_id]
-    );
-
-    res.json(result.rows);
-  } catch (error) {
-    console.error('Error fetching added movies:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
 
 
 app.delete('/delete', async (req, res) => {
@@ -206,6 +198,26 @@ app.get('/recommendations', async (req, res) => {
     res.json(uniqueRecommendations);
   } catch (error) {
     console.error('Error fetching recommendations:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+app.get('/added', async (req, res) => {
+  const { user_id } = req.query;
+
+  if (!user_id) {
+    return res.status(400).json({ error: 'User ID is required' });
+  }
+
+  try {
+    const result = await pool.query(
+      'SELECT movie, poster_path FROM watched WHERE user_id = $1',
+      [user_id]
+    );
+
+    res.json(result.rows); 
+  } catch (error) {
+    console.error('Error fetching added movies:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
