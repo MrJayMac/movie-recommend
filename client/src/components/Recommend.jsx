@@ -95,47 +95,33 @@ const Recommend = () => {
 
   return (
     <div className="recommend-container">
-      <button 
-        className="recommend-button"
-        onClick={fetchRecommendations} 
-        disabled={loading}
-      >
-        {loading ? 'Loading...' : 'Get Recommendations'}
-      </button>
-
-      {error && <p className="error-message">{error}</p>}
-
-      <div className="genre-filter">
-        <label htmlFor="genre-select" className="filter-label">Filter by Genre:</label>
-        <select
-          id="genre-select"
-          value={selectedGenre}
-          onChange={(e) => setSelectedGenre(e.target.value)}
-          className="filter-select"
-        >
-          <option value="All">All</option>
+      <div className="genre-selection">
+        <select onChange={(e) => setSelectedGenre(e.target.value)} value={selectedGenre}>
+          <option value="All">All Genres</option>
           {genres.map((genre) => (
             <option key={genre.id} value={genre.name}>{genre.name}</option>
           ))}
         </select>
+        <button onClick={fetchRecommendations} disabled={loading}>
+          {loading ? 'Loading...' : 'Get Recommendations'}
+        </button>
       </div>
 
-      <div className="recommendations-box">
-        {recommendations.length > 0 ? (
-          recommendations.map((rec) => (
-            <div key={rec.id} className="recommendation-item">
+      <div className="recommendation-list">
+        {error && <p className="error-message">{error}</p>}
+        {!loading && recommendations.length === 0 && <p>No recommendations available</p>}
+        <div className="recommendation-items">
+          {recommendations.map((movie, index) => (
+            <div key={index} className="recommendation-item">
               <img 
-                src={`https://image.tmdb.org/t/p/w200${rec.poster_path}`} 
-                alt={rec.title} 
-                className="recommendation-poster"
+                src={`https://image.tmdb.org/t/p/w200${movie.poster_path}`} 
+                alt={movie.title} 
+                className="recommendation-poster" 
               />
-              <h3 className="recommendation-title">{rec.title}</h3>
-              <p className="recommendation-genres">{rec.genre_names.join(', ')}</p>
+              <span className="recommendation-title">{movie.title}</span>
             </div>
-          ))
-        ) : (
-          <p className="no-recommendations">No recommendations available</p>
-        )}
+          ))}
+        </div>
       </div>
     </div>
   );

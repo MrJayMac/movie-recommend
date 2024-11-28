@@ -125,36 +125,37 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      <header className="home-header">
-        <h1 className="home-title">Movie Recommender</h1>
-        <button className="sign-out-button" onClick={handleSignOut}>Sign Out</button>
+      <header className="header">
+        <h1 className="title">Movie Recommender</h1>
+        <button className="sign-out" onClick={handleSignOut}>Sign Out</button>
       </header>
-      
-      <form className="search-form" onSubmit={handleSearch}>
-        <input
-          type="text"
-          className="search-input"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search for a movie..."
-          onFocus={() => fetchSuggestions(searchQuery)}
-        />
-        <div className='watched-movies'>Watched Movies</div>
-        {suggestions.length > 0 && (
-          <div className="suggestions-dropdown">
-            {suggestions.map((suggestion, index) => (
-              <div
-                key={index}
-                className="suggestion-item"
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion.title}
-              </div>
-            ))}
-          </div>
-        )}
-      </form>
-      
+
+      <div className="search-section">
+        <form className="search-form" onSubmit={handleSearch}>
+          <input
+            type="text"
+            className="search-input"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search for a movie..."
+            onFocus={() => fetchSuggestions(searchQuery)}
+          />
+          {suggestions.length > 0 && (
+            <div className="suggestions-dropdown">
+              {suggestions.map((suggestion, index) => (
+                <div
+                  key={index}
+                  className="suggestion-item"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion.title}
+                </div>
+              ))}
+            </div>
+          )}
+        </form>
+      </div>
+
       <div className="movie-list">
         {movieList.map((movie) => (
           <div key={movie.title} className="movie-item">
@@ -169,7 +170,9 @@ const Home = () => {
         ))}
       </div>
 
-      <Recommend />
+      <div className="recommendations-section">
+        <Recommend />
+      </div>
     </div>
   );
 };
