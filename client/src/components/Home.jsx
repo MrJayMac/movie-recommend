@@ -165,14 +165,17 @@ const Home = () => {
               className="movie-poster" 
             />
             <span className="movie-title">{movie.title}</span>
-            <button className="delete-button" onClick={() => handleDelete(movie.title)}>Delete</button>
+            <button 
+              className="delete-btn" 
+              onClick={() => handleDelete(movie.title)}
+            >
+              Remove
+            </button>
           </div>
         ))}
       </div>
 
-      <div className="recommendations-section">
-        <Recommend />
-      </div>
+      <Recommend />
     </div>
   );
 };
