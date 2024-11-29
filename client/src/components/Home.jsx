@@ -31,7 +31,7 @@ const Home = () => {
       if (response.data.results) {
         setSuggestions(response.data.results.slice(0, 5).map((movie) => ({
           title: movie.title,
-          poster_path: movie.poster_path
+          poster_path: movie.poster_path,
         })));
       } else {
         setSuggestions([]);
@@ -148,6 +148,11 @@ const Home = () => {
                   className="suggestion-item"
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${suggestion.poster_path}`}
+                    alt={suggestion.title}
+                    className="suggestion-poster"
+                  />
                   {suggestion.title}
                 </div>
               ))}
