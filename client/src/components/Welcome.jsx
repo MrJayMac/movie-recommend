@@ -41,9 +41,9 @@ const Welcome = () => {
       const response = await fetch(`http://localhost:5000${url}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
@@ -55,11 +55,11 @@ const Welcome = () => {
       if (isLogIn) {
         console.log('Login successful:', result.token);
         localStorage.setItem('token', result.token);
-        navigate('/home'); 
+        navigate('/home');
       } else {
         console.log('Registration successful:', result);
-        setIsLogin(true);  
-        navigate('/'); 
+        setIsLogin(true);
+        navigate('/');
       }
     } catch (error) {
       setError(error.message);
@@ -68,9 +68,11 @@ const Welcome = () => {
 
   return (
     <div className="welcome-container">
+      <h1 className="page-title">Movie Recommender</h1> 
       <div className="welcome-box">
         <form onSubmit={handleSubmit} className="welcome-form">
           <h2 className="welcome-heading">{isLogIn ? 'Login' : 'Register'}</h2>
+          
           {!isLogIn && (
             <input
               type="email"
@@ -123,7 +125,8 @@ const Welcome = () => {
             className="toggle-button"
             onClick={() => viewLogin(true)}
           >
-            Have an account?
+            Have an account? Log in
+            
           </button>
         </div>
 
