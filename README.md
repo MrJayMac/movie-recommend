@@ -5,10 +5,10 @@ A modern web application that helps users track their watched movies and get per
 ## Screenshots
 
 ### Login Page
-![Login Page](./client/public/Login.png)
+![Login Page](https://raw.githubusercontent.com/MrJayMac/movie-recommend/main/client/public/Login.png)
 
 ### Home Page
-![Home Page](./client/public/Home.png)
+![Home Page](https://raw.githubusercontent.com/MrJayMac/movie-recommend/main/client/public/Home.png)
 
 ## Features
 
