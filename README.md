@@ -2,14 +2,6 @@
 
 A modern web application that helps users track their watched movies and get personalized recommendations based on their viewing history. Built with a React frontend and Node.js/Express backend, featuring a stunning Synthwave '84 inspired UI design.
 
-## Screenshots
-
-### Login Page
-![Login Page](https://raw.githubusercontent.com/MrJayMac/movie-recommend/main/client/public/Login.png)
-
-### Home Page
-![Home Page](https://raw.githubusercontent.com/MrJayMac/movie-recommend/main/client/public/Home.png)
-
 ## Features
 
 - **User Authentication**: Secure login and registration system
