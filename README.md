@@ -2,7 +2,13 @@
 
 A modern web application that helps users track their watched movies and get personalized recommendations based on their viewing history. Built with a React frontend and Node.js/Express backend, featuring a stunning Synthwave '84 inspired UI design.
 
-![Movie Recommender Screenshot](https://i.imgur.com/placeholder.png)
+## Screenshots
+
+### Login Page
+![Login Page](./client/public/Login.png)
+
+### Home Page
+![Home Page](./client/public/Home.png)
 
 ## Features
 
