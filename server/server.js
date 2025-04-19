@@ -137,12 +137,27 @@ app.delete('/delete', async (req, res) => {
 
 
 const fetchMovieDetails = async (movieId) => {
-  const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
-    params: {
-      api_key: TMDB_API_KEY,
-    },
-  });
-  return response.data;
+  try {
+    const response = await axios.get(`https://api.themoviedb.org/3/movie/${movieId}`, {
+      params: {
+        api_key: TMDB_API_KEY,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching movie details:', error);
+    return {};
+  }
+};
+
+// Utility function to shuffle an array (Fisher-Yates algorithm)
+const shuffleArray = (array) => {
+  const arrayCopy = [...array];
+  for (let i = arrayCopy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arrayCopy[i], arrayCopy[j]] = [arrayCopy[j], arrayCopy[i]];
+  }
+  return arrayCopy;
 };
 
 app.get('/recommendations', async (req, res) => {
@@ -192,10 +207,44 @@ app.get('/recommendations', async (req, res) => {
       }
     }
 
+    // Get watched movie titles and IDs to exclude from recommendations
+    const watchedMovieTitles = watchedMovies.map(title => title.toLowerCase());
+    
+    // Get movie IDs for the watched movies
+    const watchedMovieIds = [];
+    for (const movie of watchedMovies) {
+      try {
+        const searchResult = await axios.get(`https://api.themoviedb.org/3/search/movie`, {
+          params: {
+            api_key: TMDB_API_KEY,
+            query: movie,
+          },
+        });
+        
+        if (searchResult.data.results.length > 0) {
+          watchedMovieIds.push(searchResult.data.results[0].id);
+        }
+      } catch (error) {
+        console.error(`Error fetching ID for watched movie ${movie}:`, error);
+      }
+    }
+    
+    // Get unique recommendations by ID and filter out watched movies
     const uniqueRecommendations = Array.from(new Set(allRecommendations.map(r => r.id)))
-      .map(id => allRecommendations.find(r => r.id === id));
+      .map(id => allRecommendations.find(r => r.id === id))
+      .filter(movie => {
+        // Filter out movies that are in the watched list (by ID or by title)
+        return !watchedMovieIds.includes(movie.id) && 
+               !watchedMovieTitles.includes(movie.title.toLowerCase());
+      });
+    
+    // Shuffle the recommendations for randomness
+    const shuffledRecommendations = shuffleArray(uniqueRecommendations);
+    
+    // Limit to a maximum of 10 recommendations
+    const limitedRecommendations = shuffledRecommendations.slice(0, 10);
 
-    res.json(uniqueRecommendations);
+    res.json(limitedRecommendations);
   } catch (error) {
     console.error('Error fetching recommendations:', error);
     res.status(500).json({ error: 'Server error' });
